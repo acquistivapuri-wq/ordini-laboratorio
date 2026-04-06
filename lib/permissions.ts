@@ -7,3 +7,7 @@ export function canManageProducts(user: SessionUser) {
 export function canManageUsers(user: SessionUser) {
   return user.role === "admin";
 }
+
+export function canDeleteOrders(user: SessionUser) {
+  return user.role === "admin" || user.role === "ufficio";
+}
