@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import * as bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
 import { getServiceSupabase } from "@/lib/supabase";
 import { createSessionCookie } from "@/lib/auth";
 

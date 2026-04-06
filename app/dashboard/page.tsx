@@ -111,6 +111,7 @@ export default function DashboardPage() {
 
   const canManageProducts = me?.role === "admin" || me?.role === "ufficio";
   const canManageUsers = me?.role === "admin";
+  const canDeleteOrders = me?.role === "admin" || me?.role === "ufficio";
 
   async function loadAll() {
     const meRes = await fetch("/api/auth/me");
@@ -375,6 +376,20 @@ export default function DashboardPage() {
     setOrders(data.orders);
   }
 
+  async function deleteOrder(id: string) {
+    if (!canDeleteOrders) return;
+    const ok = window.confirm("Vuoi eliminare questo ordine?");
+    if (!ok) return;
+
+    const res = await fetch(`/api/orders/${id}`, {
+      method: "DELETE"
+    });
+    const data = await res.json();
+    if (!res.ok) return setMessage(data.error || "Errore eliminazione ordine.");
+    setOrders(data.orders);
+    setMessage("Ordine eliminato.");
+  }
+
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
     window.location.href = "/login";
@@ -560,6 +575,7 @@ export default function DashboardPage() {
                           {o.status === STATUS.TODO ? <button className="small" onClick={() => updateOrderStatus(o.id, STATUS.WORKING)}>In lavorazione</button> : null}
                           {o.status !== STATUS.READY ? <button className="small" onClick={() => updateOrderStatus(o.id, STATUS.READY)}>Pronto</button> : <button className="small" onClick={() => makeBollaPdf(o)}>Bolla PDF</button>}
                           <button className="small" onClick={() => makeOrderPdf(o)}>Ordine PDF</button>
+                          {canDeleteOrders ? <button className="small danger" onClick={() => deleteOrder(o.id)}>Elimina</button> : null}
                         </div>
                       </td>
                     </tr>
